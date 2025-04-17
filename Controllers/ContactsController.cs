@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ContactManager.Data;
 using ContactManager.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ContactManager.Controllers
 {
@@ -16,6 +17,7 @@ namespace ContactManager.Controllers
         }
 
         // GET: api/contacts
+        [AllowAnonymous]
         [HttpGet]
         public ActionResult<IEnumerable<Contact>> GetAllContacts()
         {
@@ -23,6 +25,7 @@ namespace ContactManager.Controllers
         }
 
         // GET: api/contacts/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public ActionResult<Contact> GetContact(int id)
         {
@@ -34,8 +37,9 @@ namespace ContactManager.Controllers
         }
 
         // POST: api/contacts
+        [Authorize]
         [HttpPost]
-        public ActionResult<Contact> CreateContact(Contact contact)
+        public IActionResult CreateContact(Contact contact)
         {
             _context.Contacts.Add(contact);
             _context.SaveChanges();
@@ -43,6 +47,7 @@ namespace ContactManager.Controllers
         }
 
         // PUT: api/contacts/5
+        [Authorize]
         [HttpPut("{id}")]
         public IActionResult UpdateContact(int id, Contact updated)
         {
@@ -64,6 +69,7 @@ namespace ContactManager.Controllers
         }
 
         // DELETE: api/contacts/5
+        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult DeleteContact(int id)
         {
