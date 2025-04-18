@@ -38,7 +38,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Contact-Manager", Version = "v1" });
 
-    // Dodaj definicjê schematu autoryzacji (JWT Bearer)
+    // Add authorization schema definition (JWT Bearer)
     c.AddSecurityDefinition("Bearer", new()
     {
         Name = "Authorization",
@@ -46,10 +46,10 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Wpisz: Bearer {twój_token_jwt}"
+        Description = "Write: Bearer {your_token_jwt}"
     });
 
-    // Dodaj wymaganie autoryzacji do zabezpieczonych endpointów
+    // Add authorization requirement to secured endpoints
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
