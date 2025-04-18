@@ -68,8 +68,24 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200") // frontend
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+
+
 
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
+
 
 // Enable Swagger only in development environment
 if (app.Environment.IsDevelopment())
