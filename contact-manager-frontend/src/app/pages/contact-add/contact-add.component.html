@@ -1,6 +1,6 @@
 <h2>Add new contact</h2>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
+<form *ngIf="isLoggedIn"  [formGroup]="form" (ngSubmit)="onSubmit()">
   <label>First name:
     <input type="text" formControlName="firstName" />
   </label><br />

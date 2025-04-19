@@ -10,4 +10,7 @@ export class AuthService {
   login(email: string, password: string) {
     return this.http.post<{ token: string }>(`${this.apiUrl}/login`, { email, password });
   }
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
+  }
 }

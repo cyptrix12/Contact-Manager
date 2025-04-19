@@ -7,6 +7,7 @@ import { ContactService } from '../../services/contact.service';
 import { Contact } from '../../models/contact';
 import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   standalone: true,
@@ -23,7 +24,8 @@ export class ContactDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private contactService: ContactService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -58,6 +60,9 @@ export class ContactDetailsComponent implements OnInit {
         this.router.navigate(['/contacts']);
       });
     }
+  }
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
   }
   
   

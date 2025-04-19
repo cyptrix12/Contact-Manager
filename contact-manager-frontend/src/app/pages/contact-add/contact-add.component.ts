@@ -4,6 +4,7 @@ import { ContactService } from '../../services/contact.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-contact-add',
@@ -18,7 +19,8 @@ export class ContactAddComponent {
   constructor(
     private fb: FormBuilder,
     private contactService: ContactService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.form = this.fb.group({
       firstName: ['', Validators.required],
@@ -52,5 +54,8 @@ export class ContactAddComponent {
 
   isCategoryOther(): boolean {
     return this.form.get('category')?.value === 'other';
+  }
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
   }
 }
