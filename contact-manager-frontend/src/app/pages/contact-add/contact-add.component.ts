@@ -36,6 +36,10 @@ export class ContactAddComponent {
 
   onSubmit(): void {
     if (this.form.valid) {
+      const data = this.form.value;
+      if (!data.birthDate) {
+        delete data.birthDate;
+      }
       this.contactService.addContact(this.form.value).subscribe({
         next: () => {
           alert('Contact was added!');
