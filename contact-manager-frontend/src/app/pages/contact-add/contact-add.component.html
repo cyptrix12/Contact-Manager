@@ -1,0 +1,52 @@
+<h2>Dodaj nowy kontakt</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <label>Imię:
+    <input type="text" formControlName="firstName" />
+  </label><br />
+
+  <label>Nazwisko:
+    <input type="text" formControlName="lastName" />
+  </label><br />
+
+  <label>Email:
+    <input type="email" formControlName="email" />
+  </label><br />
+
+  <label>Hasło:
+    <input type="password" formControlName="password" />
+  </label><br />
+
+  <label>Kategoria:
+    <select formControlName="category">
+      <option value="prywatny">Prywatny</option>
+      <option value="służbowy">Służbowy</option>
+      <option value="inny">Inny</option>
+    </select>
+  </label><br />
+
+  <ng-container *ngIf="isCategoryBusiness()">
+    <label>Podkategoria:
+      <select formControlName="subcategory">
+        <option value="szef">Szef</option>
+        <option value="klient">Klient</option>
+      </select>
+    </label><br />
+  </ng-container>
+
+  <ng-container *ngIf="isCategoryOther()">
+    <label>Podkategoria (własna):
+      <input type="text" formControlName="subcategory" />
+    </label><br />
+  </ng-container>
+
+  <label>Telefon:
+    <input type="text" formControlName="phone" />
+  </label><br />
+
+  <label>Data urodzenia:
+    <input type="date" formControlName="birthDate" />
+  </label><br /><br />
+
+  <button type="submit" [disabled]="form.invalid">Zapisz kontakt</button>
+</form>

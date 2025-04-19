@@ -1,4 +1,5 @@
 <h2>Contact list</h2>
+<button routerLink="/contacts/add">Add contact</button>
 <ul>
   <li *ngFor="let contact of contacts">
     <a [routerLink]="['/contacts', contact.id]">

@@ -1,8 +1,18 @@
-<div *ngIf="contact">
-    <h2>{{ contact.firstName }} {{ contact.lastName }}</h2>
-    <p>Email: {{ contact.email }}</p>
-    <p>Phone number: {{ contact.phone }}</p>
-    <p>Category: {{ contact.category }}</p>
-    <p>Birth Date: {{ contact.birthDate }}</p>
-  </div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label>Imię: <input formControlName="firstName" /></label><br />
+    <label>Nazwisko: <input formControlName="lastName" /></label><br />
+    <label>Email: <input formControlName="email" /></label><br />
+    <label>Kategoria:
+        <select formControlName="category">
+        <option value="prywatny">Prywatny</option>
+        <option value="służbowy">Służbowy</option>
+        <option value="inny">Inny</option>
+        </select>
+    </label><br />
+    <label>Podkategoria: <input formControlName="subcategory" /></label><br />
+    <label>Telefon: <input formControlName="phoneNumber" /></label><br />
+    <label>Data urodzenia: <input formControlName="dateOfBirth" type="date" /></label><br />
+    <button type="submit">Zapisz zmiany</button>
+    <button (click)="deleteContact()">Usuń kontakt</button>
+</form>
   
