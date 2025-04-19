@@ -35,10 +35,11 @@ export class ContactDetailsComponent implements OnInit {
         firstName: [data.firstName, Validators.required],
         lastName: [data.lastName, Validators.required],
         email: [data.email, [Validators.required, Validators.email]],
+        password: [data.password, [Validators.required, Validators.minLength(6)]],
         category: [data.category],
         subcategory: [data.subcategory],
-        phoneNumber: [data.phone],
-        dateOfBirth: [data.birthDate]
+        phone: [data.phone],
+        birthDate: [data.birthDate]
       });
     });
   }
@@ -46,7 +47,8 @@ export class ContactDetailsComponent implements OnInit {
     if (!this.contact) return;
   
     this.contactService.updateContact(this.contact.id, this.form.value).subscribe(() => {
-      alert('Contact updater!');
+      
+      alert('Contact updated!');
     });
   }
   deleteContact() {

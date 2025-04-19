@@ -25,7 +25,7 @@ export class ContactAddComponent {
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      category: ['prywatny', Validators.required],
+      category: ['private', Validators.required],
       subcategory: [''],
       phone: [''],
       birthDate: ['']
@@ -36,22 +36,21 @@ export class ContactAddComponent {
     if (this.form.valid) {
       this.contactService.addContact(this.form.value).subscribe({
         next: () => {
-          alert('Kontakt został dodany!');
+          alert('Contact was added!');
           this.router.navigate(['/contacts']);
         },
         error: err => {
-          console.error('Błąd przy dodawaniu kontaktu:', err);
+          console.error('Error while adding contact:', err);
         }
       });
     }
   }
 
-  // Opcjonalnie: dynamiczna logika dla podkategorii
   isCategoryBusiness(): boolean {
-    return this.form.get('category')?.value === 'służbowy';
+    return this.form.get('category')?.value === 'business';
   }
 
   isCategoryOther(): boolean {
-    return this.form.get('category')?.value === 'inny';
+    return this.form.get('category')?.value === 'other';
   }
 }

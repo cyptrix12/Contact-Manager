@@ -1,18 +1,19 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <label>Imię: <input formControlName="firstName" /></label><br />
-    <label>Nazwisko: <input formControlName="lastName" /></label><br />
+<form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label>First name: <input formControlName="firstName" /></label><br />
+    <label>Last name: <input formControlName="lastName" /></label><br />
     <label>Email: <input formControlName="email" /></label><br />
-    <label>Kategoria:
+    <label>Password: <input formControlName="password" /></label><br />
+    <label>Category:
         <select formControlName="category">
-        <option value="prywatny">Prywatny</option>
-        <option value="służbowy">Służbowy</option>
-        <option value="inny">Inny</option>
+        <option value="private">Private</option>
+        <option value="business">Business</option>
+        <option value="other">Other</option>
         </select>
     </label><br />
-    <label>Podkategoria: <input formControlName="subcategory" /></label><br />
-    <label>Telefon: <input formControlName="phoneNumber" /></label><br />
-    <label>Data urodzenia: <input formControlName="dateOfBirth" type="date" /></label><br />
-    <button type="submit">Zapisz zmiany</button>
-    <button (click)="deleteContact()">Usuń kontakt</button>
+    <label>Subcategory: <input formControlName="subcategory" /></label><br />
+    <label>Phone number: <input formControlName="phone" /></label><br />
+    <label>Birth date: <input formControlName="birthDate" type="date" /></label><br />
+    <button type="submit">Save changes</button>
+    <button (click)="deleteContact()">Delete Contact</button>
 </form>
   
