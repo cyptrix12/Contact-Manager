@@ -10,7 +10,25 @@ export class AuthService {
   login(email: string, password: string) {
     return this.http.post<{ token: string }>(`${this.apiUrl}/login`, { email, password });
   }
+  register(data: { email: string, password: string }) {
+    return this.http.post(`${this.apiUrl}/register`, data);
+  }  
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
+  }
+  getUserEmail(): string | null {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+  
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] ?? null;
+    } catch (e) {
+      console.error('Invalid token', e);
+      return null;
+    }
+  }
+  logout() {
+    localStorage.removeItem('token');
   }
 }
