@@ -12,7 +12,7 @@
 
   <label>Email:
     <input type="email" formControlName="email" />
-    <div *ngIf="form.get('email')?.errors?.['notUnique']">
+    <div *ngIf="form.get('email')?.errors?.['notUnique']" style="color: red;">
         Email already exists.
       </div>
   </label><br />
