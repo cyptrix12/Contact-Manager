@@ -8,17 +8,22 @@ import { Contact } from '../../models/contact';
 import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { Category } from '../../models/category';
+import { Subcategory } from '../../models/subcategory';
 
 @Component({
   standalone: true,
   selector: 'app-contact-details',
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule ],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
   templateUrl: './contacts-details.component.html',
   styleUrls: ['./contacts-details.component.css']
 })
 export class ContactDetailsComponent implements OnInit {
-  contact: Contact | null = null;
-  form!: FormGroup;
+  contact: Contact | null = null; // The contact being edited
+  form!: FormGroup; // Reactive form for editing the contact
+  categories: Category[] = []; // List of available categories
+  subcategories: Subcategory[] = []; // List of subcategories for the selected category
+  customSubcategoryMode = false; // Indicates if the "other" category is selected
 
   constructor(
     private route: ActivatedRoute,
@@ -29,30 +34,151 @@ export class ContactDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = Number(this.route.snapshot.paramMap.get('id')); // Get the contact ID from the route
+    this.loadCategories(); // Load the list of categories
     this.contactService.getContactById(id).subscribe(data => {
       this.contact = data;
+      console.log('Contact', data);
 
+      // If categoryId == 3, treat the subcategory as a custom string
+      this.customSubcategoryMode = data.categoryId === 3;
+
+      // Build the form with common fields
       this.form = this.fb.group({
         firstName: [data.firstName, Validators.required],
         lastName: [data.lastName, Validators.required],
         email: [data.email, [Validators.required, Validators.email]],
         password: [data.password, [Validators.required, Validators.minLength(6)]],
-        category: [data.category],
-        subcategory: [data.subcategory],
+        categoryId: [data.categoryId, Validators.required],
         phone: [data.phone],
         birthDate: [data.birthDate]
       });
+
+      // Add the appropriate control for the subcategory
+      if (this.customSubcategoryMode) {
+        console.log('Custom subcategory mode enabled');
+        console.log('OtherSubcategory:', data);
+        // In custom mode, show a text field for OtherSubcategory
+        this.form.addControl('otherSubcategory', this.fb.control(data.otherSubcategory, Validators.required));
+      } else {
+        // In other modes, use a select control for subcategory (stores the ID)
+        this.form.addControl('subcategory', this.fb.control(data.subcategoryId, Validators.required));
+        // If categoryId exists, load the list of subcategories
+        if (data.categoryId) {
+          this.loadSubcategories(data.categoryId);
+        }
+      }
     });
   }
+
   onSubmit() {
-    if (!this.contact) return;
-  
-    this.contactService.updateContact(this.contact.id, this.form.value).subscribe(() => {
-      
-      alert('Contact updated!');
+    if (!this.contact || !this.form.valid) return;
+
+    const formValue = this.form.value;
+    console.log('Form value onSubmit:', formValue);
+
+    // Prepare the updated contact object
+    const updatedContact = {
+      id: this.contact.id,
+      firstName: formValue.firstName,
+      lastName: formValue.lastName,
+      email: formValue.email,
+      password: formValue.password,
+      phone: formValue.phone,
+      birthDate: formValue.birthDate,
+      categoryId: formValue.categoryId,
+      subcategoryId: this.customSubcategoryMode ? null : formValue.subcategory,
+      otherSubcategory: this.customSubcategoryMode ? formValue.otherSubcategory : null
+    };
+
+    console.log('Prepared updatedContact:', updatedContact);
+    console.log('Contact ID:', this.contact.id);
+
+    // Send the updated contact to the backend
+    this.contactService.updateContact(this.contact.id, updatedContact).subscribe({
+      next: () => {
+        alert('Contact updated!');
+        this.router.navigate(['/contacts']);
+      },
+      error: err => {
+        console.error('Update error:', err);
+        alert('Update failed.');
+      }
     });
   }
+
+  // Get the name of the selected category
+  getCategoryName(): string {
+    return this.contact ? (this.categories.find(cat => cat.id === this.contact!.categoryId)?.name || '') : '';
+  }
+
+  // Get the name of the selected subcategory
+  getSubcategoryName(): string {
+    const sub = this.subcategories.find(sub => sub.id === this.contact?.subcategoryId);
+    return sub ? sub.name : '';
+  }
+
+  // Load the list of categories from the backend
+  loadCategories() {
+    this.contactService.getCategories().subscribe(data => {
+      this.categories = data;
+    });
+  }
+
+  // Load the list of subcategories for the selected category
+  loadSubcategories(categoryId: number) {
+    this.contactService.getSubcategories(categoryId).subscribe(data => {
+      this.subcategories = data;
+    });
+  }
+
+  // Handle category change event
+  onCategoryChange(): void {
+    const categoryId = this.form.get('categoryId')?.value as number | null;
+    console.log('Changed categoryId:', categoryId);
+
+    const selectedCategory = this.categories.find(c => c.id === categoryId);
+    console.log('Selected category:', selectedCategory);
+
+    if (selectedCategory?.name === 'other') {
+      // Switch to custom subcategory mode
+      this.customSubcategoryMode = true;
+
+      // Remove the 'subcategory' control if it exists
+      if (this.form.contains('subcategory')) {
+        this.form.removeControl('subcategory');
+      }
+
+      // Add the 'otherSubcategory' control if it doesn't exist
+      if (!this.form.contains('otherSubcategory')) {
+        this.form.addControl('otherSubcategory', this.fb.control('', Validators.required));
+      }
+
+      // Optionally set the default value from existing contact data
+      this.form.patchValue({ otherSubcategory: this.contact?.otherSubcategory || '' });
+    } else {
+      // Standard mode
+      this.customSubcategoryMode = false;
+
+      // Remove the 'otherSubcategory' control if it exists
+      if (this.form.contains('otherSubcategory')) {
+        this.form.removeControl('otherSubcategory');
+      }
+
+      // Add the 'subcategory' control if it doesn't exist
+      if (!this.form.contains('subcategory')) {
+        this.form.addControl('subcategory', this.fb.control('', Validators.required));
+      }
+
+      // If the category has subcategories, load them
+      if (categoryId) {
+        this.loadSubcategories(categoryId);
+        // Optionally set a default value when the list is loaded
+      }
+    }
+  }
+
+  // Delete the contact
   deleteContact() {
     if (confirm('Are you sure you want to delete this contact?')) {
       this.contactService.deleteContact(this.contact!.id).subscribe(() => {
@@ -61,9 +187,9 @@ export class ContactDetailsComponent implements OnInit {
       });
     }
   }
+
+  // Check if the user is logged in
   get isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
   }
-  
-  
 }

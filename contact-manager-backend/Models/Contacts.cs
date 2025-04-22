@@ -31,14 +31,13 @@ namespace ContactManager.Models
         [JsonPropertyName("password")]
         public string Password { get; set; } = "";
 
-        // Main category (e.g. "business", "private", "other") - required
-        [Required(ErrorMessage = "Category is required.")]
-        [JsonPropertyName("category")]
-        public string Category { get; set; } = "";
+        public int CategoryId { get; set; }
+        public Category? Category { get; set; }
 
-        // Subcategory (e.g. "client", "boss")
-        [JsonPropertyName("subcategory")]
-        public string? Subcategory { get; set; }
+        public int? SubcategoryId { get; set; }
+        public Subcategory? Subcategory { get; set; }
+
+        public string? OtherSubcategory { get; set; } = null;
 
         // Optional phone number
         [JsonPropertyName("phone")]

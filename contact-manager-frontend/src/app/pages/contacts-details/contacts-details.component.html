@@ -4,15 +4,23 @@
     <label>Email: <input formControlName="email" /></label><br />
     <label>Password: <input formControlName="password" /></label><br />
     <label>Category:
-        <select formControlName="category">
-        <option value="private">Private</option>
-        <option value="business">Business</option>
-        <option value="other">Other</option>
+        <select formControlName="categoryId" (change)="onCategoryChange()">
+            <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
         </select>
     </label><br />
-    <label>Subcategory: <input formControlName="subcategory" /></label><br />
+      
+    <label>Subcategory:</label>
+    <div *ngIf="!customSubcategoryMode">
+        <select formControlName="subcategory">
+            <option *ngFor="let sub of subcategories" [ngValue]="sub.id">{{ sub.name }}</option>
+        </select>
+    </div>
+    <div *ngIf="customSubcategoryMode">
+        <input type="text" formControlName="otherSubcategory" />
+    </div>
+      
     <label>Phone number: <input formControlName="phone" /></label><br />
-    <label>Birth date: <input formControlName="birthDate" type="date" /></label><br />
+    <label>Birth date: <input formControlName="birthDate" type="date" />{{ contact?.birthDate | date:'yyyy-MM-dd' }}</label><br />
     <button type="submit">Save changes</button>
     <button (click)="deleteContact()">Delete Contact</button>
 </form>
@@ -23,9 +31,8 @@
     First name: {{ contact?.firstName }}<br />
     Last name: {{ contact?.lastName }}<br />
     Email: {{ contact?.email }}<br />
-    Category: {{ contact?.category }}<br />
-    Subcategory: {{ contact?.subcategory }}<br />
+    Category: {{ getCategoryName() }}<br />
+    Subcategory: {{ customSubcategoryMode ? contact?.otherSubcategory : getSubcategoryName() }}<br />
     Phone number: {{ contact?.phone }}<br />
     Birth date: {{ contact?.birthDate | date:'yyyy-MM-dd' }}<br />
 </div>
-  

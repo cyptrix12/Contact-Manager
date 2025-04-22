@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ContactManager.Data;
 using ContactManager.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContactManager.Controllers
 {
@@ -61,6 +62,9 @@ namespace ContactManager.Controllers
             contact.Password = updated.Password;
             contact.Category = updated.Category;
             contact.Subcategory = updated.Subcategory;
+            contact.CategoryId = updated.CategoryId;
+            contact.SubcategoryId = updated.SubcategoryId;
+            contact.OtherSubcategory = updated.OtherSubcategory;
             contact.Phone = updated.Phone;
             contact.BirthDate = updated.BirthDate;
 
@@ -81,5 +85,17 @@ namespace ContactManager.Controllers
             _context.SaveChanges();
             return NoContent();
         }
+
+        //[HttpGet("categories")]
+        //public ActionResult<IEnumerable<Category>> GetCategories()
+        //{
+        //    return _context.Categories.Include(c => c.Subcategories).ToList();
+        //}
+
+        //[HttpGet("subcategories/{categoryId}")]
+        //public ActionResult<IEnumerable<Subcategory>> GetSubcategories(int categoryId)
+        //{
+        //    return _context.Subcategories.Where(s => s.CategoryId == categoryId).ToList();
+        //}
     }
 }

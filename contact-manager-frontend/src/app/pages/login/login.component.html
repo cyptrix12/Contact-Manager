@@ -1,13 +1,20 @@
 <h2>Login</h2>
 
-<form (ngSubmit)="login()">
-  <label>Email:
-    <input type="email" [(ngModel)]="email" name="email" required />
-  </label>
-  <br />
-  <label>Password:
-    <input type="password" [(ngModel)]="password" name="password" required />
-  </label>
-  <br />
-  <button type="submit">Sign in</button>
-</form>
+<div *ngIf="isLoggedIn; else loginForm">
+  <p>You are logged in as <strong>{{ email }}</strong></p>
+  <button (click)="logout()">Logout</button>
+</div>
+
+<ng-template #loginForm>
+  <form (ngSubmit)="login()">
+    <label>Email:
+      <input type="email" [(ngModel)]="email" name="email" required />
+    </label>
+    <br />
+    <label>Password:
+      <input type="password" [(ngModel)]="password" name="password" required />
+    </label>
+    <br />
+    <button type="submit">Sign in</button>
+  </form>
+</ng-template>

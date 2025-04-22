@@ -38,7 +38,7 @@ namespace ContactManager.Controllers
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            return Ok("User registered successfully.");
+            return Ok(new { message = "User registered successfully." });
         }
 
         // POST: api/auth/login
