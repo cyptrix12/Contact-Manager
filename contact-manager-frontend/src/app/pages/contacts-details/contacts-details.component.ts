@@ -167,13 +167,15 @@ export class ContactDetailsComponent implements OnInit {
 
       // Add the 'subcategory' control if it doesn't exist
       if (!this.form.contains('subcategory')) {
-        this.form.addControl('subcategory', this.fb.control('', Validators.required));
+        this.form.addControl('subcategory', this.fb.control(null, Validators.required));
       }
 
       // If the category has subcategories, load them
       if (categoryId) {
         this.loadSubcategories(categoryId);
-        // Optionally set a default value when the list is loaded
+      } else {
+        // If no subcategories are available, set subcategory to null
+        this.form.patchValue({ subcategory: null });
       }
     }
   }
