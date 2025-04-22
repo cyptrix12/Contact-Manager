@@ -1,6 +1,5 @@
 <h2>Add new contact</h2>
 
-<!-- visible if logged in -->
 <form *ngIf="isLoggedIn" [formGroup]="form" (ngSubmit)="onSubmit()">
   <label>First name:
     <input type="text" formControlName="firstName" />
@@ -41,8 +40,6 @@
   </div>
 
 
-
-  <!-- visible if not logged in -->
   <div *ngIf="customSubcategoryMode">
     <input type="text" formControlName="subcategoryName" />
   </div>

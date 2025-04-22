@@ -4,8 +4,6 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 
-
-
 @Component({
   standalone: true,
   selector: 'app-login',
@@ -18,11 +16,12 @@ export class LoginComponent {
   password: string = '';
 
   constructor(
-    private authService: AuthService,
-    private router: Router
+    private authService: AuthService, // Handles authentication logic
+    private router: Router // Used for navigation
   ) {}
 
-  ngOnInit(): void {  
+  ngOnInit(): void {
+    // Initialize the component and refresh login state
     if (this.authService.isLoggedIn()) {
       this.email = this.authService.getUserEmail();
     }
@@ -30,6 +29,7 @@ export class LoginComponent {
   }
 
   login() {
+    // Logs in the user and stores the token
     if (!this.email || !this.password) {
       alert('Please provide login credentials.');
       return;
@@ -47,11 +47,13 @@ export class LoginComponent {
   }
 
   refreshLoginState(): void {
+    // Updates the login state and retrieves the user's email
     this.isLoggedIn = this.authService.isLoggedIn();
     this.email = this.authService.getUserEmail();
   }
 
   logout() {
+    // Logs out the user and clears session data
     this.authService.logout();
     this.email = null;
     this.router.navigate(['/login']);
