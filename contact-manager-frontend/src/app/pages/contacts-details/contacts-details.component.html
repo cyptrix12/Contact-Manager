@@ -1,7 +1,12 @@
 <form *ngIf="form && isLoggedIn" [formGroup]="form" (ngSubmit)="onSubmit()">
     <label>First name: <input formControlName="firstName" /></label><br />
     <label>Last name: <input formControlName="lastName" /></label><br />
-    <label>Email: <input formControlName="email" /></label><br />
+    <label>Email:
+        <input formControlName="email" />
+        <div *ngIf="form.get('email')?.errors?.['notUnique']" style="color: red;">
+            This email is already in use.
+        </div>
+    </label><br />
     <label>Password: <input formControlName="password" /></label><br />
     <label>Category:
         <select formControlName="categoryId" (change)="onCategoryChange()">

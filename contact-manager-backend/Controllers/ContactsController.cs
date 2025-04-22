@@ -63,6 +63,12 @@ namespace ContactManager.Controllers
             if (contact == null)
                 return NotFound();
 
+            // Check if the email is already in use by another contact
+            bool emailInUse = _context.Contacts
+                .Any(c => c.Email == updated.Email && c.Id != id);
+            if (emailInUse)
+                return Conflict("Email already in use");
+
             contact.FirstName = updated.FirstName;
             contact.LastName = updated.LastName;
             contact.Email = updated.Email;

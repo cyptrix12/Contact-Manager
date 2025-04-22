@@ -54,6 +54,11 @@ export class ContactDetailsComponent implements OnInit {
         birthDate: [data.birthDate]
       });
 
+      // Clear the 'notUnique' error when the email field value changes
+      this.form.get('email')?.valueChanges.subscribe(() => {
+        this.form.get('email')?.setErrors(null);
+      });
+
       // Add the appropriate control for the subcategory
       if (this.customSubcategoryMode) {
         console.log('Custom subcategory mode enabled');
@@ -92,7 +97,6 @@ export class ContactDetailsComponent implements OnInit {
     };
 
     console.log('Prepared updatedContact:', updatedContact);
-    console.log('Contact ID:', this.contact.id);
 
     // Send the updated contact to the backend
     this.contactService.updateContact(this.contact.id, updatedContact).subscribe({
@@ -101,8 +105,13 @@ export class ContactDetailsComponent implements OnInit {
         this.router.navigate(['/contacts']);
       },
       error: err => {
-        console.error('Update error:', err);
-        alert('Update failed.');
+        if (err.status === 409) {
+          console.error('Email already exists');
+          this.form.get('email')?.setErrors({ notUnique: true }); // Set the 'notUnique' error on the email field
+        } else {
+          console.error('Update error:', err);
+          alert('Update failed.');
+        }
       }
     });
   }
@@ -126,9 +135,21 @@ export class ContactDetailsComponent implements OnInit {
   }
 
   // Load the list of subcategories for the selected category
-  loadSubcategories(categoryId: number) {
+  loadSubcategories(categoryId: number): void {
     this.contactService.getSubcategories(categoryId).subscribe(data => {
+      console.log('Loaded subcategories:', data);
       this.subcategories = data;
+
+      // Set the default value for subcategory if subcategories exist
+      if (this.subcategories.length > 0) {
+        this.form.patchValue({ subcategory: this.subcategories[0].id });
+        this.form.get('subcategory')?.setValidators(Validators.required);
+      } else {
+        // If no subcategories are available, set subcategory to null and remove required validator
+        this.form.patchValue({ subcategory: null });
+        this.form.get('subcategory')?.clearValidators();
+      }
+      this.form.get('subcategory')?.updateValueAndValidity();
     });
   }
 
@@ -167,7 +188,7 @@ export class ContactDetailsComponent implements OnInit {
 
       // Add the 'subcategory' control if it doesn't exist
       if (!this.form.contains('subcategory')) {
-        this.form.addControl('subcategory', this.fb.control(null, Validators.required));
+        this.form.addControl('subcategory', this.fb.control(null));
       }
 
       // If the category has subcategories, load them
