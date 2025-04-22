@@ -69,6 +69,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddAuthorization();
 
+// Register the User repository
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
@@ -85,6 +86,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Enable CORS policy
 app.UseCors("AllowFrontend");
 
 
@@ -95,6 +97,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Enable authentication and authorization middleware
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -105,9 +108,11 @@ app.UseHttpsRedirection();
 // Map API controllers
 app.MapControllers();
 
+// Enable CORS
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    // Initialize the database
     SeedData.Initialize(services);
 }
 
