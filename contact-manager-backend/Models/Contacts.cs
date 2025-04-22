@@ -1,8 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace ContactManager.Models
 {
+    [Index(nameof(Email), IsUnique = true)]
     public class Contact
     {
         // Primary key (auto-incremented)

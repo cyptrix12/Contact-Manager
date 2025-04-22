@@ -42,8 +42,15 @@ namespace ContactManager.Controllers
         [HttpPost]
         public IActionResult CreateContact(Contact contact)
         {
-            _context.Contacts.Add(contact);
-            _context.SaveChanges();
+            try
+            {
+                _context.Contacts.Add(contact);
+                _context.SaveChanges();
+            }   catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("UNIQUE") == true)
+            {
+                return Conflict("Email already in use");
+            }
+
             return CreatedAtAction(nameof(GetContact), new { id = contact.Id }, contact);
         }
 

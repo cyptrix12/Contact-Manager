@@ -49,6 +49,14 @@ export class ContactAddComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCategories(); // Load categories when the component is initialized
+
+    // Listen for changes in the email field and clear the 'notUnique' error
+    this.form.get('email')?.valueChanges.subscribe(() => {
+      const emailControl = this.form.get('email');
+      if (emailControl?.hasError('notUnique')) {
+        emailControl.setErrors(null); // Clear the 'notUnique' error
+      }
+    });
   }
 
   onSubmit(): void {
@@ -61,21 +69,29 @@ export class ContactAddComponent implements OnInit {
 
     // Prepare the DTO for creating a contact
     const dto: CreateContactDto = {
-      firstName:  raw.firstName!,
-      lastName:   raw.lastName!,
-      email:      raw.email!,
-      password:   raw.password!,
-      categoryId: raw.categoryId!,                    
+      firstName: raw.firstName!,
+      lastName: raw.lastName!,
+      email: raw.email!,
+      password: raw.password!,
+      categoryId: raw.categoryId!,
       ...(this.customSubcategoryMode ? { OtherSubcategory: raw.subcategoryName! } : {}),
       ...(raw.subcategoryId ? { subcategoryId: raw.subcategoryId } : {}),
-      ...(raw.phone        ? { phone: raw.phone } : {}),
-      ...(raw.birthDate    ? { birthDate: raw.birthDate } : {})
+      ...(raw.phone ? { phone: raw.phone } : {}),
+      ...(raw.birthDate ? { birthDate: raw.birthDate } : {})
     };
 
     this.isSubmitting = true; // Set submitting state to true
     this.contactService.addContact(dto).subscribe({
       next: () => this.router.navigate(['/contacts']), // Navigate to contacts list on success
-      error: err => console.error(err), // Log errors
+      error: err => {
+        this.isSubmitting = false; // Reset submitting state on error
+        if (err.status === 409) {
+          console.log('Email already exists'); // Log email conflict error
+          this.form.get('email')?.setErrors({ notUnique: true }); // Set email error if already exists
+        } else {
+          console.error(err); // Show generic error message
+        }
+      },
       complete: () => (this.isSubmitting = false) // Reset submitting state
     });
   }

@@ -12,6 +12,9 @@
 
   <label>Email:
     <input type="email" formControlName="email" />
+    <div *ngIf="form.get('email')?.errors?.['notUnique']">
+        Email already exists.
+      </div>
   </label><br />
 
   <label>Password:
