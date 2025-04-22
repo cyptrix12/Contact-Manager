@@ -8,6 +8,8 @@ namespace ContactManager.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Contact> Contacts => Set<Contact>();
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Subcategory> Subcategories { get; set; }
         public DbSet<User> Users => Set<User>();
 
     }

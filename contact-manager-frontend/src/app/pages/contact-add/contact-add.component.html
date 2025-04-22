@@ -1,6 +1,7 @@
 <h2>Add new contact</h2>
 
-<form *ngIf="isLoggedIn"  [formGroup]="form" (ngSubmit)="onSubmit()">
+<!-- visible if logged in -->
+<form *ngIf="isLoggedIn" [formGroup]="form" (ngSubmit)="onSubmit()">
   <label>First name:
     <input type="text" formControlName="firstName" />
   </label><br />
@@ -13,33 +14,35 @@
     <input type="email" formControlName="email" />
   </label><br />
 
-  <label>Passowrd:
-    <input type="text" formControlName="password" />
+  <label>Password:
+    <input type="password" formControlName="password" />
   </label><br />
 
   <label>Category:
-    <select formControlName="category">
-      <option value="private">Private</option>
-      <option value="business">Business</option>
-      <option value="other">Other</option>
+    <select formControlName="categoryId" (change)="onCategoryChange()">
+      <option [ngValue]="null">-- choose --</option>
+      <option *ngFor="let cat of categories" [ngValue]="cat.id">
+        {{ cat.name }}
+      </option>
     </select>
   </label><br />
+  
+  <div *ngIf="subcategories.length && !customSubcategoryMode">
+      <label>Subcategory:</label>
+    <select formControlName="subcategoryId">
+      <option [ngValue]="null">-- choose --</option>
+      <option *ngFor="let sub of subcategories" [ngValue]="sub.id">
+        {{ sub.name }}
+      </option>
+    </select>
+  </div>
 
-  <ng-container *ngIf="isCategoryBusiness()">
-    <label>Subcategory:
-      <select formControlName="subcategory">
-        <option value="boss">Boss</option>
-        <option value="client">Client</option>
-      </select>
-    </label><br />
-  </ng-container>
 
-  <ng-container *ngIf="isCategoryOther()">
-    <label>Subcategory (custom):
-      <input type="text" formControlName="subcategory" />
-    </label><br />
-  </ng-container>
 
+  <!-- visible if not logged in -->
+  <div *ngIf="customSubcategoryMode">
+    <input type="text" formControlName="subcategoryName" />
+  </div>
   <label>Phone number:
     <input type="text" formControlName="phone" />
   </label><br />
@@ -48,5 +51,5 @@
     <input type="date" formControlName="birthDate" />
   </label><br /><br />
 
-  <button type="submit" [disabled]="form.invalid">Save contact</button>
+  <button type="submit" [disabled]="form.invalid || isSubmitting">Save contact</button>
 </form>

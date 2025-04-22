@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using ContactManagerBackend.Data;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -103,5 +104,11 @@ app.UseHttpsRedirection();
 
 // Map API controllers
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeedData.Initialize(services);
+}
 
 app.Run();
